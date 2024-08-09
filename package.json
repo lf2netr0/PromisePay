@@ -18,10 +18,14 @@
     "Lluis Agusti <hi@llu.lu>"
   ],
   "dependencies": {
+    "@web3auth/base": "^8.12.0",
+    "@web3auth/ethereum-provider": "^8.12.0",
+    "@web3auth/single-factor-auth": "^8.1.0",
     "next": "^13.5.6",
     "next-auth": "^4.24.7",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "web3": "^4.11.1"
   },
   "devDependencies": {
     "@types/node": "^18.19.26",
