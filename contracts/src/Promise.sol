@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "contracts/lib/world-id-contracts/src/interfaces/IWorldID.sol";
+import "./interfaces/IWorldID.sol";
 library ByteHasher {
 	/// @dev Creates a keccak256 hash of a bytestring.
 	/// @param value The bytestring to hash
