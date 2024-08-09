@@ -8,7 +8,7 @@ contract PromisePay {
     mapping(uint256 => address) public promises;
     uint256 public promiseCount;
 
-    event PromiseCreated(uint256 indexed promiseId, address promiseAddress);
+    event PromiseCreated(address indexed host , uint256 indexed promiseId, address promiseAddress);
 
     function createPromise(
         PromiseInfo memory _promiseData,
@@ -21,7 +21,7 @@ contract PromisePay {
             _appId
         );
         promises[promiseCount] = address(newPromise);
-        emit PromiseCreated(promiseCount, address(newPromise));
+        emit PromiseCreated(msg.sender, promiseCount, address(newPromise));
         promiseCount++;
     }
 }
