@@ -16,28 +16,29 @@ enum PromiseType { Online, Offline }
 enum RewardTokenType { BaseToken, ERC20 }
 enum RewardDistributionType { Pool, EachPerson }
 
+struct Reward {
+    address tokenAddress;
+    RewardTokenType tokenType;
+    uint256 amount;
+    RewardDistributionType distributionType;
+}
+
+struct PromiseInfo {
+    address host;
+    string title;
+    uint256 period;
+    PromiseType promiseType;
+    string location;
+    uint256 depositRequiredAmount;
+    bool depositRequired;
+    bool rewardIncluded;
+    Reward reward;
+}
+
 contract Promise {
     using ByteHasher for bytes;
 
 
-    struct Reward {
-        address tokenAddress;
-        RewardTokenType tokenType;
-        uint256 amount;
-        RewardDistributionType distributionType;
-    }
-
-    struct PromiseInfo {
-        address host;
-        string title;
-        uint256 period;
-        PromiseType promiseType;
-        string location;
-        uint256 depositRequiredAmount;
-        bool depositRequired;
-        bool rewardIncluded;
-        Reward reward;
-    }
 
     mapping(address => bool) public checkIns;
     mapping(address => bool) public deposits;
@@ -57,37 +58,11 @@ contract Promise {
     error InvalidNullifier();
 
     constructor(
-        address _host,
-        string memory _title,
-        uint256 _period,
-        PromiseType _promiseType,
-        string memory _location,
-        uint256 _depositRequiredAmount,
-        bool _depositRequired,
-        bool _rewardIncluded,
-        address _rewardTokenAddress,
-        RewardTokenType _rewardTokenType,
-        uint256 _rewardAmount,
-        RewardDistributionType _rewardDistributionType,
+        PromiseInfo memory _promiseInfo,
         IWorldID _worldId,
         string memory _appId
     ) {
-        promiseInfo = PromiseInfo({
-            host: _host,
-            title: _title,
-            period: _period,
-            promiseType: _promiseType,
-            location: _location,
-            depositRequiredAmount: _depositRequiredAmount,
-            depositRequired: _depositRequired,
-            rewardIncluded: _rewardIncluded,
-            reward: Reward({
-                tokenAddress: _rewardTokenAddress,
-                tokenType: _rewardTokenType,
-                amount: _rewardAmount,
-                distributionType: _rewardDistributionType
-            })
-        });
+        promiseInfo = _promiseInfo;
         
         worldId = _worldId;
         checkInExternalNullifierHash = abi
