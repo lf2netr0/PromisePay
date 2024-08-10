@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity 0.8.19;
 
 import "./interfaces/IWorldID.sol";
 import './interfaces/IERC20.sol';
@@ -70,14 +70,14 @@ contract Promise {
 
     constructor(
         PromiseInfo memory _promiseInfo,
-        IWorldID _worldId,
+        address _worldId,
         string memory _appId
     ) {
         promiseInfo = _promiseInfo;
 
-        worldId = _worldId;
+        worldId = IWorldID(_worldId);
         checkInExternalNullifierHash = abi
-            .encodePacked(abi.encodePacked(_appId).hashToField(), "check_in")
+            .encodePacked(abi.encodePacked(_appId).hashToField(), "check-in")
             .hashToField();
         claimExternalNullifierHash = abi
             .encodePacked(abi.encodePacked(_appId).hashToField(), "claim")

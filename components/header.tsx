@@ -1,4 +1,5 @@
-import Link from "next/link"
+
+import { Link } from '@chakra-ui/next-js'
 import { signIn, signOut, useSession } from "next-auth/react"
 import styles from "./header.module.css"
 
@@ -7,9 +8,11 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 // Import Single Factor Auth SDK for no redirect flow
 import { Web3Auth, decodeToken } from "@web3auth/single-factor-auth";
 import { useEffect, useState } from "react";
-
+import {addressAtom, balanceAtom, providerAtom} from './state'
+import { Flex, Text, Box } from '@chakra-ui/react';
 // RPC libraries for blockchain calls
 import RPC from "./evm.web3";
+import { useAtom } from "jotai";
 // import RPC from "./evm.ethers";
 // import RPC from "./evm.viem";
 
@@ -18,14 +21,16 @@ const verifier = "wld-id-login";
 const clientId = "BIDkIB_b8KGDnF1rj77nInYKlrmqk1yL2B9-xvfH2ngARHSeHxlst0Y97HgEpUe8Xg2GySwzUyO2l3EyP3lZWVE"; // get from https://dashboard.web3auth.io
 
 const chainConfig = {
-  chainId: "0x1",
-  displayName: "Ethereum Mainnet",
+  chainId: "0x14a34",
+  // chainId: "0x539",
+  displayName: "Base Sepolia",
   chainNamespace: CHAIN_NAMESPACES.EIP155,
   tickerName: "Ethereum",
   ticker: "ETH",
   decimals: 18,
-  rpcTarget: "https://rpc.ankr.com/eth",
-  blockExplorerUrl: "https://etherscan.io",
+  rpcTarget: "https://sepolia.base.org",
+  // rpcTarget: "HTTP://127.0.0.1:7545",
+  blockExplorerUrl: "https://sepolia.basescan.org/",
 };
 
 const privateKeyProvider = new EthereumPrivateKeyProvider({
@@ -36,7 +41,6 @@ const privateKeyProvider = new EthereumPrivateKeyProvider({
 const web3authSfa = new Web3Auth({
   clientId, // Get your Client ID from Web3Auth Dashboard
   web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET, // ["cyan", "testnet"]
-  usePnPKey: false, // Setting this to true returns the same key as PnP Web SDK, By default, this SDK returns CoreKitKey.
   privateKeyProvider,
 });
 // The approach used in this component shows how to build a sign in and sign out
@@ -48,19 +52,34 @@ export default function Header() {
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [account, setAccount] = useAtom(addressAtom)
+  const [balance, setBalance] = useAtom(balanceAtom)
+  const [provider, setProvider] = useAtom(providerAtom)
+
   const getAccounts = async () => {
-    if (!web3authSfa.provider) {
+    if (!provider) {
       console.log("No provider found");
       return;
     }
-    const rpc = new RPC(web3authSfa.provider);
-    const userAccount = await rpc.getAccounts();
-    console.log(userAccount);
+    const rpc = new RPC(provider);
+      const userAccount = await rpc.getAccounts();
+      setAccount(userAccount[0]);
+      const bal = await rpc.getBalance();
+      setBalance((Number(bal)/10**18).toString());
+      console.log(balance);
+      console.log(account);
   };
+
   useEffect(() => {
     const init = async () => {
       try {
-        web3authSfa.init();
+        await web3authSfa.init();
+        if(web3authSfa.provider){
+          setProvider(web3authSfa.provider)
+        }
+        if (web3authSfa.state.privKey) {
+          await getAccounts()
+        }
       } catch (error) {
         console.error(error);
       }
@@ -83,23 +102,32 @@ export default function Header() {
           verifierId: (idTokenResult.payload as any).sub,
           idToken: session.accessToken,
         });
+        // await getAccounts()
         setIsLoggingIn(false);
         setIsLoggedIn(true);
       } catch (err) {
         // Single Factor Auth SDK throws an error if the user has already enabled MFA
         // One can use the Web3AuthNoModal SDK to handle this case
         setIsLoggingIn(false);
-        signOut()
         console.error(err);
       }
     }
     console.log(session)
-    if (session?.accessToken && !isLoggedIn) {
+    if (session?.accessToken && !web3authSfa.state.privKey) {
       getWallet()
     }
-  }, [session]);
+    if (web3authSfa.state.privKey) {
+      getAccounts()
+    }
+  }, [session, web3authSfa.provider]);
   return (
-    <header>
+    <Flex
+      bg="teal.500"
+      color="white"
+      p="4"
+      justifyContent="center"
+      alignItems="center"
+    >
       <noscript>
         <style>{`.nojs-show { opacity: 1; top: 0; }`}</style>
       </noscript>
@@ -157,28 +185,11 @@ export default function Header() {
       <nav>
         <ul className={styles.navItems}>
           <li className={styles.navItem}>
-            <Link href="/">Home</Link>
-          </li>
-          <li className={styles.navItem}>
-            <Link href="/client">Client</Link>
-          </li>
-          <li className={styles.navItem}>
-            <Link href="/server">Server</Link>
-          </li>
-          <li className={styles.navItem}>
-            <Link href="/protected">Protected</Link>
-          </li>
-          <li className={styles.navItem}>
-            <Link href="/api-example">API</Link>
-          </li>
-          <li className={styles.navItem}>
-            <Link href="/admin">Admin</Link>
-          </li>
-          <li className={styles.navItem}>
-            <Link href="/me">Me</Link>
+            <Link href="/create" color='blue.400' _hover={{ color: 'blue.500' }}>Create Promise</Link>
           </li>
         </ul>
       </nav>
-    </header>
+      <Text fontSize="lg" fontWeight="bold">App Name</Text>
+    </Flex>
   )
 }
