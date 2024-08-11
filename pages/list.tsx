@@ -3,16 +3,24 @@ import { useSession } from "next-auth/react"
 import Layout from "../components/layout"
 import AccessDenied from "../components/access-denied"
 
-import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
-import { useAtom } from "jotai"
-import { addressAtom } from "../components/state"
+
+import { List, ListItem, ListIcon, Box, Text, Link } from '@chakra-ui/react';
+import { MdCheckCircle } from "react-icons/md";
 
 
-export default function ProtectedPage() {
+import RPC from "../components/evm.web3";
+
+import { useAtom } from 'jotai';
+import { addressAtom, providerAtom } from '../components/state';
+
+export default function ProtectedList() {
+  const [provider] = useAtom(providerAtom)
   const { data: session } = useSession()
   const [content, setContent] = useState()
   const [account] = useAtom(addressAtom)
+  console.log(provider)
 
+  const [promises, setPromises] = useState([]);
   // Fetch content from protected route
   useEffect(() => {
     const fetchData = async () => {
@@ -25,6 +33,30 @@ export default function ProtectedPage() {
     fetchData()
   }, [session])
 
+
+
+
+  useEffect(() => {
+    const rpc = new RPC(provider);
+    rpc.contract.events.PromiseCreated({
+      fromBlock: 13773164
+    }).on('data', event => {
+      console.log(event.returnValues)
+      const { host, promiseId, promiseAddress } = event.returnValues;
+      setPromises(prevPromises => [
+        ...prevPromises,
+        { host, promiseId, promiseAddress }
+      ]);
+    })
+
+    return () => {
+      // Cleanup listener when the component is unmounted
+      rpc.contract.removeAllListeners('PromiseCreated');
+    };
+  }, [provider]);
+
+
+
   // If no session exists, display access denied message
   if (!session) {
     return (
@@ -33,35 +65,27 @@ export default function ProtectedPage() {
       </Layout>
     )
   }
-  const handleVerify = async (proof: ISuccessResult) => {
-    console.log(proof)
-};
-
-  const onSuccess = () => {
-    // This is where you should perform any actions after the modal is closed
-    // Such as redirecting the user to a new page
-    console.log("/success");
-  };
-
   // If session exists, display content
   return (
     <Layout>
-      <h1>Protected Page</h1>
-      <p>
-        <strong>{content ?? "\u00a0"}</strong>
-      </p>
 
-      <IDKitWidget
-        app_id="app_GBkZ1KlVUdFTjeMXKlVUdFT" // must be an app set to on-chain in Developer Portal
-        action="claim_nft"
-        signal={account} // proof will only verify if the signal is unchanged, this prevents tampering
-        handleVerify={handleVerify} // callback when the proof is received
-        onSuccess={onSuccess} // use onSuccess to call your smart contract
-      // no use for handleVerify, so it is removed
-      // use default verification_level (orb-only), as device credentials are not supported on-chain
-      >
-        {({ open }) => <button onClick={open}>Verify with World ID</button>}
-      </IDKitWidget>
+      <Box p={5}>
+        <Text fontSize="xl" mb={4}>Promise Events</Text>
+        <List spacing={3}>
+          {promises.map((promise) => (
+            <ListItem key={promise.promiseId}>
+              <ListIcon as={MdCheckCircle} color="green.500" />
+              Host: {promise.host} - ID: {promise.promiseId.toString()} - Address: {promise.promiseAddress}
+              <Link href={`/detail/${promise.promiseAddress}`} passhref={true}>
+                <Text as="a" ml={4} color="blue.500" textDecoration="underline">
+                  View Details
+                </Text>
+              </Link>
+            </ListItem>
+          ))}
+        </List>
+      </Box>
+
     </Layout>
   )
 }

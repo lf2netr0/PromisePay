@@ -28,7 +28,7 @@ const chainConfig = {
   tickerName: "Ethereum",
   ticker: "ETH",
   decimals: 18,
-  rpcTarget: "https://sepolia.base.org",
+  rpcTarget: "https://base-sepolia.g.alchemy.com/v2/Uye7DOCgmKHvFB8vOHGyC_sh4ysKjQNb",
   // rpcTarget: "HTTP://127.0.0.1:7545",
   blockExplorerUrl: "https://sepolia.basescan.org/",
 };
@@ -62,12 +62,12 @@ export default function Header() {
       return;
     }
     const rpc = new RPC(provider);
-      const userAccount = await rpc.getAccounts();
-      setAccount(userAccount[0]);
-      const bal = await rpc.getBalance();
-      setBalance((Number(bal)/10**18).toString());
-      console.log(balance);
-      console.log(account);
+    const userAccount = await rpc.getAccounts();
+    setAccount(userAccount[0]);
+    const bal = await rpc.getBalance();
+    setBalance((Number(bal)/10**18).toString());
+    console.log(balance);
+    console.log(account);
   };
 
   useEffect(() => {
@@ -86,6 +86,11 @@ export default function Header() {
     };
 
     init();
+    return ()=>{
+      setProvider(null)
+      setAccount('')
+      setBalance('')
+    }
   }, []);
   useEffect(() => {
     async function getWallet() {
@@ -112,14 +117,14 @@ export default function Header() {
         console.error(err);
       }
     }
-    console.log(session)
+    console.log(session, web3authSfa.state.privKey)
     if (session?.accessToken && !web3authSfa.state.privKey) {
       getWallet()
     }
     if (web3authSfa.state.privKey) {
       getAccounts()
     }
-  }, [session, web3authSfa.provider]);
+  }, [session, web3authSfa.state.privKey, web3authSfa.provider]);
   return (
     <Flex
       bg="teal.500"
@@ -127,6 +132,7 @@ export default function Header() {
       p="4"
       justifyContent="center"
       alignItems="center"
+      width="100%"
     >
       <noscript>
         <style>{`.nojs-show { opacity: 1; top: 0; }`}</style>
@@ -174,6 +180,7 @@ export default function Header() {
                 onClick={(e) => {
                   e.preventDefault()
                   signOut()
+                  web3authSfa.logout()
                 }}
               >
                 Sign out
