@@ -17,9 +17,10 @@ contract PromisePay {
         PromiseInfo memory _promiseData,
         address _worldId,
         address _eas,
+        bytes32 _schema,
         string memory _appId
     ) external {
-        Promise newPromise = new Promise(_promiseData, _worldId, _eas, _appId);
+        Promise newPromise = new Promise(_promiseData, _worldId, _eas, _schema, _appId);
         promises[promiseCount] = address(newPromise);
         emit PromiseCreated(msg.sender, promiseCount, address(newPromise));
         promiseCount += 1;

@@ -5,8 +5,9 @@ import "forge-std/Test.sol";
 import "../src/PromisePay.sol"; // Update with the actual path
 import "../src/Promise.sol"; // Update with the actual path
 import "./mocks/MockWorldID.sol";
-import "../src/EAS/EAS.sol";
-import "../src/EAS/SchemaRegistry.sol";
+
+import "@ethereum-attestation-service/eas-contracts/contracts/EAS.sol";
+import "@ethereum-attestation-service/eas-contracts/contracts/SchemaRegistry.sol";
 
 contract PromisePayTest is Test {
     PromisePay promisePay;
@@ -15,15 +16,14 @@ contract PromisePayTest is Test {
     string appId = "TestAppId";
     SchemaRegistry registry;
     EAS mockEas;
-    string schema;
+    bytes32 schema;
 
     function setUp() public {
         promisePay = new PromisePay();
         worldId = address(new MockWorldID()); // Assuming you have a mock for WorldID
         registry = new SchemaRegistry();
         mockEas = new EAS(registry);
-        schema = "string Action,uint256[] Proof,uint256 Nullifier,address PromiseAddress,uint256 MerkleRoot";
-        registry.register(schema, ISchemaResolver(address(0)), true);
+        schema = registry.register('string Action,uint256[] Proof,uint256 Nullifier,address PromiseAddress,uint256 MerkleRoot', ISchemaResolver(address(0)), true);
         promiseInfo = PromiseInfo({
             host: address(this),
             title: "Test Promise",
@@ -49,7 +49,7 @@ contract PromisePayTest is Test {
         vm.startPrank(address(this));
         uint256 initialCount = promisePay.promiseCount();
 
-        promisePay.createPromise(promiseInfo, worldId, address(mockEas), appId);
+        promisePay.createPromise(promiseInfo, worldId, address(mockEas), schema, appId);
 
         // Verify the Promise was created
         assertEq(promisePay.promiseCount(), initialCount + 1);
@@ -60,7 +60,7 @@ contract PromisePayTest is Test {
         // Emitting event testing
         // vm.expectEmit(true, true, true, true);
         // emit PromiseCreated(address(this), initialCount, newPromiseAddress);
-        promisePay.createPromise(promiseInfo, worldId, address(mockEas), appId);
+        promisePay.createPromise(promiseInfo, worldId, address(mockEas), schema, appId);
 
         vm.stopPrank();
     }

@@ -3,7 +3,8 @@ pragma solidity ^0.8.19;
 
 import "./interfaces/IWorldID.sol";
 import "./interfaces/IERC20.sol";
-import "./EAS/IEAS.sol";
+import {IEAS, AttestationRequest, AttestationRequestData} from "@ethereum-attestation-service/eas-contracts/contracts/IEAS.sol";
+import {NO_EXPIRATION_TIME, EMPTY_UID} from "@ethereum-attestation-service/eas-contracts/contracts/Common.sol";
 
 library ByteHasher {
     /// @dev Creates a keccak256 hash of a bytestring.
@@ -66,6 +67,7 @@ contract Promise {
 
     // The address of the global EAS contract.
     IEAS private immutable _eas;
+    bytes32 private immutable _schema;
     event CheckIn(address indexed attendee);
     event ClaimPromise(
         address indexed claimAddr,
@@ -82,6 +84,7 @@ contract Promise {
         PromiseInfo memory _promiseInfo,
         address _worldId,
         address eas,
+        bytes32 schema,
         string memory _appId
     ) {
         promiseInfo = _promiseInfo;
@@ -90,6 +93,7 @@ contract Promise {
         }
 
         _eas = IEAS(eas);
+        _schema = schema;
         worldId = IWorldID(_worldId);
         checkInExternalNullifierHash = abi
             .encodePacked(abi.encodePacked(_appId).hashToField(), "check-in")
@@ -123,6 +127,25 @@ contract Promise {
         checkIns[_attendee] = true;
         emit CheckIn(_attendee);
         // Emit EAS attest here
+        _eas.attest(
+            AttestationRequest({
+                schema: _schema,
+                data: AttestationRequestData({
+                    recipient: address(_attendee), // No recipient
+                    expirationTime: NO_EXPIRATION_TIME, // No expiration time
+                    revocable: true,
+                    refUID: EMPTY_UID, // No references UI
+                    data: abi.encode(
+                        "check-in",
+                        proof,
+                        nullifierHash,
+                        address(this),
+                        root
+                    ), // Encode a single uint256 as a parameter to the schema
+                    value: 0 // No value/ETH
+                })
+            })
+        );
     }
 
     function claimPromise(
@@ -197,6 +220,25 @@ contract Promise {
             tokenSent
         );
         // Emit EAS attest here
+        _eas.attest(
+            AttestationRequest({
+                schema: _schema,
+                data: AttestationRequestData({
+                    recipient: address(promiseInfo.host), // No recipient
+                    expirationTime: NO_EXPIRATION_TIME, // No expiration time
+                    revocable: true,
+                    refUID: EMPTY_UID, // No references UI
+                    data: abi.encode(
+                        "claim",
+                        proof,
+                        nullifierHash,
+                        address(this),
+                        root
+                    ), // Encode a single uint256 as a parameter to the schema
+                    value: 0 // No value/ETH
+                })
+            })
+        );
     }
 
     function depositToPromise(
@@ -223,6 +265,25 @@ contract Promise {
         attendeeCount++;
         emit DepositToPromise(msg.sender);
         // Emit EAS attest here
+        _eas.attest(
+            AttestationRequest({
+                schema: _schema,
+                data: AttestationRequestData({
+                    recipient: address(promiseInfo.host), // No recipient
+                    expirationTime: NO_EXPIRATION_TIME, // No expiration time
+                    revocable: true,
+                    refUID: EMPTY_UID, // No references UI
+                    data: abi.encode(
+                        "claim",
+                        proof,
+                        nullifierHash,
+                        address(this),
+                        root
+                    ), // Encode a single uint256 as a parameter to the schema
+                    value: 0 // No value/ETH
+                })
+            })
+        );
     }
 
     function verifyAndExecute(

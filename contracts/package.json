@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.2"
+    "@ethereum-attestation-service/eas-contracts": "^1.7.1",
+    "@openzeppelin/contracts": "^5.0.2",
+    "contracts": "link:@ethereum-attestation-service/eas-contracts/contracts"
   }
 }
