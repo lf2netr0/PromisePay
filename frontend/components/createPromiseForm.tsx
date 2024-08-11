@@ -23,14 +23,14 @@ import { PromiseType, RewardDistributionType, RewardTokenType } from './IPromise
 const CreatePromiseForm = () => {
     const [provider] = useAtom(providerAtom)
     const rpc = new RPC(provider);
-    const [title, setTitle] = useState('');
-    const [periodST, setPeriodST] = useState(new Date);
-    const [periodEnd, setPeriodEnd] = useState(new Date);
+    const [title, setTitle] = useState('Super Hack');
+    const [periodST, setPeriodST] = useState(new Date());
+    const [periodEnd, setPeriodEnd] = useState(Number(new Date())+180*1000);
     const [promiseType, setType] = useState(0);
-    const [location, setLocation] = useState('');
-    const [depositRequired, setDepositRequired] = useState(false);
-    const [depositRequiredAmount, setDepositAmount] = useState('0');
-    const [depositReturn, setDepositReturn] = useState(false);
+    const [location, setLocation] = useState('ETHGlobal');
+    const [depositRequired, setDepositRequired] = useState(true);
+    const [depositRequiredAmount, setDepositAmount] = useState('0.0001');
+    const [depositReturn, setDepositReturn] = useState(true);
     const [rewardIncluded, setRewardIncluded] = useState(false);
     const [rewardAmount, setRewardAmount] = useState('0');
     const [rewardToken, setRewardToken] = useState('0x0000000000000000000000000000000000000000');
@@ -39,9 +39,9 @@ const CreatePromiseForm = () => {
     const [account] = useAtom(addressAtom)
     const toast = useToast();
     console.log(account)
+    console.log(depositRequiredAmount)
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(rpc.web3.utils.toWei(depositRequiredAmount, 'ether'))
         try {
             // 假设 createPromise 是传递到此组件的函数，用于与区块链交互
             const receipt = await rpc.createPromise({
@@ -136,9 +136,9 @@ const CreatePromiseForm = () => {
                     {depositRequired && (
                         <>
                             <FormControl isRequired>
-                                <FormLabel htmlFor='deposit-amount'>Deposit Amount</FormLabel>
+                                <FormLabel htmlFor='depositRequiredAmount'>Deposit Amount</FormLabel>
                                 <NumberInput min={0}>
-                                    <NumberInputField id='deposit-amount' value={depositRequiredAmount} onChange={e => setDepositAmount(parseFloat(e.target.value).toString())} />
+                                    <NumberInputField id='depositRequiredAmount' value={depositRequiredAmount} onChange={e => setDepositAmount(parseFloat(e.target.value).toString())} />
                                 </NumberInput>
                             </FormControl>
 
