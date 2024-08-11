@@ -19,18 +19,17 @@ export default function Footer() {
       <Button as="a" p="10"
         color="white"
         bg="teal.500"
-        width="50%">
-
-        <Link
-          href="/list">List</Link> 
+        width="50%"
+        href="/list">
+        List
       </Button>
+
       <Button as="a" p="10"
         color="white"
         bg="teal.500"
-        width="50%">
-
-        <Link
-          href="/wallet">Wallet</Link>
+        width="50%"
+        href="/wallet">
+        Wallet
       </Button>
 
     </Flex>

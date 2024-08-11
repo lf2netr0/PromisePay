@@ -71,7 +71,7 @@ export default function ProtectedList() {
     <Layout>
 
       <Box p={5}>
-        <Text fontSize="xl" mb={4}>Promise Events</Text>
+        <Text fontSize="xl" mb={4}>Promise Lists</Text>
         <List spacing={3}>
           {promises.map((promise) => (
             <ListItem key={promise.promiseId}>
@@ -81,13 +81,13 @@ export default function ProtectedList() {
                 <Text>ID: {promise.promiseId.toString()}</Text>
                 <Text>Address: {promise.promiseAddress}</Text>
               </Box>
-              <Button as="a" ml={4} color="blue.500" >
-                <Link href={`/detail/${promise.promiseAddress}`} passhref={true}>
-
-                  View Details
-
-                </Link>
-              </Button>
+              <Box>
+                <Button as="a"  color="blue.500" >
+                  <Link href={`/detail/${promise.promiseAddress}`}>
+                    View Details
+                  </Link>
+                </Button>
+              </Box>
             </ListItem>
           ))}
         </List>
