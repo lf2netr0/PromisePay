@@ -2,5 +2,6 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+fs_permissions = [{ access = "read", path = "../node_modules"}] # default: all file cheat codes are disabled
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

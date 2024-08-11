@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity ^0.8.19;
 
 import "./interfaces/IWorldID.sol";
-import './interfaces/IERC20.sol';
+import "./interfaces/IERC20.sol";
+import "./EAS/IEAS.sol";
+
 library ByteHasher {
     /// @dev Creates a keccak256 hash of a bytestring.
     /// @param value The bytestring to hash
@@ -62,19 +64,32 @@ contract Promise {
     uint256 internal immutable groupId = 1;
     uint256 attendeeCount;
 
+    // The address of the global EAS contract.
+    IEAS private immutable _eas;
     event CheckIn(address indexed attendee);
-    event ClaimPromise(address indexed claimAddr, uint256 etherVal, address tokenAddr, uint256 tokenAmount );
+    event ClaimPromise(
+        address indexed claimAddr,
+        uint256 etherVal,
+        address tokenAddr,
+        uint256 tokenAmount
+    );
     event DepositToPromise(address indexed depositor);
 
     error InvalidNullifier();
+    error InvalidEAS();
 
     constructor(
         PromiseInfo memory _promiseInfo,
         address _worldId,
+        address eas,
         string memory _appId
     ) {
         promiseInfo = _promiseInfo;
+        if (address(eas) == address(0)) {
+            revert InvalidEAS();
+        }
 
+        _eas = IEAS(eas);
         worldId = IWorldID(_worldId);
         checkInExternalNullifierHash = abi
             .encodePacked(abi.encodePacked(_appId).hashToField(), "check-in")
@@ -175,7 +190,12 @@ contract Promise {
                 tokenSent
             );
         }
-        emit ClaimPromise(msg.sender, valueSent, promiseInfo.reward.tokenAddress, tokenSent);
+        emit ClaimPromise(
+            msg.sender,
+            valueSent,
+            promiseInfo.reward.tokenAddress,
+            tokenSent
+        );
         // Emit EAS attest here
     }
 

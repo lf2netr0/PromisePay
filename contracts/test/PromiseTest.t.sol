@@ -5,19 +5,25 @@ import "forge-std/Test.sol";
 import "../src/Promise.sol";
 import "./mocks/MockWorldID.sol";
 import "./mocks/MockERC20.sol";
-
+import "../src/EAS/EAS.sol";
+import "../src/EAS/SchemaRegistry.sol";
 contract PromiseTest is Test {
     MockWorldID public worldId;
     MockERC20 public rewardToken;
     Promise public promiseImpl;
     address public host;
     address public attendee;
-
+    SchemaRegistry registry;
+    EAS mockEas;
+    string schema;
     function setUp() public {
         // Deploy Mock Contracts
         worldId = new MockWorldID();
         rewardToken = new MockERC20("Reward Token", "RT", 1000 ether);
-
+        registry = new SchemaRegistry();
+        mockEas = new EAS(registry);
+        schema = 'string Action,uint256[] Proof,uint256 Nullifier,address PromiseAddress,uint256 MerkleRoot';
+        registry.register(schema, ISchemaResolver(address(0)), true);
         // Set up PromiseInfo
         PromiseInfo memory promiseInfo = PromiseInfo({
             host: address(this),
@@ -39,7 +45,7 @@ contract PromiseTest is Test {
         });
 
         // Deploy the Promise contract
-        promiseImpl = new Promise(promiseInfo, address(worldId), "app_staging_48e425187ceaa548d46adb5bdaa1c8b5");
+        promiseImpl = new Promise(promiseInfo, address(worldId), address(mockEas), "app_staging_48e425187ceaa548d46adb5bdaa1c8b5");
 
         // Set up addresses
         host = address(this);
