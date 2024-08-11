@@ -1,103 +1,68 @@
 # PromisePay
 
-## Introduction
+## Initial Product Goal
 
-PromisePay aims to enhance the effectiveness of commitments by leveraging security deposits and incentivizing individuals to fulfill their promises through a reward mechanism. Not just a tool for managing promises, PromisePay is a platform designed to motivate people to uphold their commitments.
+Enable individuals and organizations to secure commitments by combining financial incentives with a decentralized platform that encourages accountability and minimizes trust barriers.
 
-## Features
+## Project Overview
+
+PromisePay is designed to enhance the reliability of commitments by leveraging security deposits and rewards. The platform not only manages promises but also motivates individuals to fulfill them through a structured, transparent process.
+
+This project consists of 5 main components:
 
 ### WorldID Integration
 
-Users can log in using WorldID, ensuring anonymity while maintaining security through KYC verification. This integration prevents Sybil attacks, with each participation verified by WorldID’s zero-knowledge proof.
+Users can log in using WorldID, maintaining their anonymity while ensuring security through KYC verification. This integration prevents Sybil attacks, with every participation verified by WorldID’s zero-knowledge proof.
 
-### Creating a Promise
+### Creating and Managing Promises
 
-Users can create a promise by setting a deposit and reward amount, along with completion criteria and deadlines.
+Users can create a promise by setting a deposit and reward amount, along with specific completion criteria and deadlines. By paying a deposit, users demonstrate their commitment. If the promise is not fulfilled, the deposit is forfeited, while successful completion results in a reward distribution.
 
-### Deposit Payment
+### Verification Mechanism
 
-By paying a deposit, users demonstrate their commitment. If the promise is not fulfilled, the deposit is forfeited.
-
-### Setting Rewards
-
-Creators can set a reward amount to motivate participants to fulfill the promise. Upon meeting the criteria, participants can claim their reward.
-
-### Fulfillment Verification
-
-Promise fulfillment is verified using various methods such as NFC, dynamic QR codes, authorized checkers, specific Wi-Fi connections, and mutual check-ins. User credibility scores are verified via the EAS contract.
+Promise fulfillment is verified through multiple methods, including NFC, dynamic QR codes, authorized checkers, specific Wi-Fi connections, and mutual check-ins. User credibility scores are maintained and verified via the EAS contract, ensuring a reliable system.
 
 ### Reward and Penalty Distribution
 
-Based on verification results, rewards and penalties are automatically distributed. Participants who fulfill the promise receive rewards, while those who don't forfeit their deposit.
+Upon verification, the system automatically handles the distribution of rewards and penalties. Participants who fulfill their promises receive rewards, while those who don't forfeit their deposits.
 
-## Use Cases
+### Use Case Flexibility
 
-### Social Life
+PromisePay is versatile, supporting a variety of scenarios including social commitments, educational goals, and crypto event participation. The platform allows for dynamic interaction, making it applicable across personal, professional, and community-focused contexts.
 
-- **Gatherings and Dates:** Ensuring timely attendance at gatherings with friends by setting deposits and rewards.
-- **Personal Tasks:** Setting deposits and rewards to ensure personal tasks, like helping a friend move, are completed.
-- **Friend Encouragement:** Encouraging friends to help you keep promises, like running 5 km daily or quitting smoking, by setting deposits and rewards.
+- **Social Life:** Manage commitments like gathering attendance, personal tasks, and friend encouragement.
+- **Education and Training:** Ensure course attendance and learning goal completion with deposits and rewards.
+- **Crypto Events:** Facilitate event participation with deposit-based registration and rewards, ensuring attendance and engagement.
 
-### Education and Training
+## Development Pipeline
 
-- **Course Attendance:** Students can set deposits to ensure class attendance and offer rewards to encourage learning.
-- **Learning Goals:** Setting deposits and rewards to ensure the completion of learning objectives.
+### Bounty Pools (Under Construction)
 
-### Crypto Events
+Businesses and DAOs will be able to post public bounties for talents to engage with, addressing specific challenges or contributing to project development.
 
-Participants pay a deposit to join events, with rewards like limited edition NFTs and project tokens given to those who attend. If fewer participants attend, the rewards increase. No-shows forfeit their deposit.
+### Payment Layer (Under Construction)
 
-- **Process:**
-  1. **Create Event:** Set the event name, time, location, deposit amount (e.g., 100 USDC), rewards (limited NFTs and project tokens), and verification methods.
-  2. **Participant Registration:** Participants pay a deposit to register, and the system records their information and deposit payment.
-  3. **On-site Verification:** Use the specified verification methods (NFC, dynamic QR code, specific Wi-Fi) to confirm attendance.
-  4. **Reward and Deposit Handling:** After the event, the system automatically processes deposits and distributes rewards based on verification results. Attendees receive a full refund of their deposit and rewards, while no-shows forfeit their deposits, which can be used for project development or future event reward pools.
-
-### Project Commitments
-
-For example, a project commits to achieving 10M TVL within a month, and users can invest USDC to support this goal. If the goal is met, users' USDC will be exchanged for the project’s tokens at a 10M valuation; if not, they receive a full refund.
-
-### Meme Coin Commitments
-
-Users can invest USDC, and if the meme coin's Twitter account reaches 10K followers and gains over 1M USDC in investment, the users’ deposits will be exchanged for the meme coin; otherwise, they receive a full refund.
-
-## Business Model
-
-### Platform Fees
-
-PromisePay charges a 5% fee on all transactions.
-
-### Token Issuance
-
-In the first year, 80% of the platform’s tokens will be distributed to users based on the fees they’ve paid.
-
-### Token Profit Sharing
-
-After one year, token holders can share in the platform’s fees, incentivizing continued use and token holding.
+PromisePay is working on integrating a robust payment layer that will streamline transactions and facilitate smooth interactions between users and the platform.
 
 ## Advantages
 
-- **Dual Motivation:** The combination of penalties and rewards increases the likelihood of commitment fulfillment.
-- **Flexible Application:** PromisePay can be applied to a wide range of commitments in both personal and professional contexts.
-- **Increased Reliability:** Ensures that commitments are met on time, reducing frustration and losses from unmet promises.
+- **Dual Motivation:** The platform combines penalties and incentives to significantly increase the likelihood of commitment fulfillment.
+- **Flexible Application:** PromisePay can be used for a wide range of commitments, making it versatile and suitable for various contexts.
+- **Increased Reliability:** The structured system ensures commitments are met on time, reducing the frustration and potential losses from unfulfilled promises.
 
 ## Challenges and Solutions
 
 ### User Adoption
 
-- **Challenge:** Some users may be uncomfortable with the deposit and reward system.
-- **Solution:** Provide detailed guides and case studies showcasing the benefits of these mechanisms.
+- **Challenge:** Users may initially be hesitant about the deposit and reward system.
+- **Solution:** PromisePay will provide comprehensive guides and case studies to illustrate the benefits and value of these mechanisms.
 
 ### Security
 
-- **Challenge:** Ensuring the safe storage and transaction of deposits and rewards.
-- **Solution:** Utilize blockchain technology and smart contracts to manage deposits and rewards transparently and securely.
+- **Challenge:** Safeguarding deposits and rewards while ensuring secure transactions.
+- **Solution:** Utilizing blockchain technology and smart contracts to manage and secure deposits and rewards, ensuring transparency and security.
 
-### Verification Mechanism
+### Verification Reliability
 
-- **Challenge:** Implementing and maintaining multiple verification methods.
-- **Solution:** Conduct thorough technical testing and optimization to ensure each verification method works reliably across different scenarios.
-
-## Conclusion
-
-PromisePay combines penalties and incentives to replace verbal commitments with financial ones, significantly increasing the likelihood of commitments being fulfilled. This makes your application more appealing, applicable across a wide range of life and work scenarios, especially in crypto events and project commitments, where this mechanism can effectively boost participation and create more community value.
+- **Challenge:** Implementing and maintaining various verification methods.
+- **Solution:** Conducting rigorous technical testing and optimization to ensure each verification method works reliably in different scenarios.
