@@ -9,7 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       m="0 auto"
       px={4}
       flex="1"
-      pt="4"
+      pt="40"
       pb="20" // Give enough padding-bottom to avoid content being overlaid by the footer
     >
       {children}

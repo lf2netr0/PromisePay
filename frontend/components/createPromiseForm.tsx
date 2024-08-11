@@ -64,7 +64,7 @@ const CreatePromiseForm = () => {
             });
             toast({
                 title: "Promise created.",
-                description: "Your promise has been successfully created! Tx: " + receipt.blockHash,
+                description: "Your promise has been successfully created! Tx: " + receipt.transactionHash,
                 status: "success",
                 duration: 10000,
                 isClosable: true,

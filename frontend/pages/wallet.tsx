@@ -6,7 +6,8 @@ import EthereumRpc from "../components/evm.web3"
 import React from "react";
 import QRCode from "react-qr-code";
 import { useAtom } from "jotai";
-import {addressAtom, balanceAtom} from '../components/state'
+import { addressAtom, balanceAtom } from '../components/state'
+import { Text } from "@chakra-ui/react"
 export default function ProtectedPage() {
   const { data: session } = useSession()
   const [account, setAccount] = useAtom(addressAtom)
@@ -24,22 +25,21 @@ export default function ProtectedPage() {
   // If session exists, display content
   return (
     <Layout>
-
-      <div style={{ height: "auto", margin: "0 auto", maxWidth: 64, width: "100%" }}>
-        <h1>wallet:</h1>
-        <p>
-          <strong>{account ?? "\u00a0"}</strong>
-        </p>
+      {account && (
+        <>
+        <Text>Address: {account ?? "\u00a0"}</Text>
+        <Text>Balance: {balance ?? "\u00a0"} ETH</Text>
         <QRCode
           size={256}
           style={{ height: "auto", maxWidth: "100%", width: "100%" }}
           value={account}
           viewBox={`0 0 256 256`}
-        />
-        <p>
-          balance: {balance}
-        </p>
-      </div>
+        /></>
+      )}
+      {!account && (
+        <Text>Loading...</Text>
+
+      )}
     </Layout>
   )
 }

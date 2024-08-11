@@ -8,7 +8,7 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 // Import Single Factor Auth SDK for no redirect flow
 import { Web3Auth, decodeToken } from "@web3auth/single-factor-auth";
 import { useEffect, useState } from "react";
-import {addressAtom, balanceAtom, providerAtom} from './state'
+import { addressAtom, balanceAtom, providerAtom } from './state'
 import { Flex, Text, Box } from '@chakra-ui/react';
 // RPC libraries for blockchain calls
 import RPC from "./evm.web3";
@@ -65,7 +65,7 @@ export default function Header() {
     const userAccount = await rpc.getAccounts();
     setAccount(userAccount[0]);
     const bal = await rpc.getBalance();
-    setBalance((Number(bal)/10**18).toString());
+    setBalance((Number(bal) / 10 ** 18).toString());
     console.log(balance);
     console.log(account);
   };
@@ -74,7 +74,7 @@ export default function Header() {
     const init = async () => {
       try {
         await web3authSfa.init();
-        if(web3authSfa.provider){
+        if (web3authSfa.provider) {
           setProvider(web3authSfa.provider)
         }
         if (web3authSfa.state.privKey) {
@@ -86,7 +86,7 @@ export default function Header() {
     };
 
     init();
-    return ()=>{
+    return () => {
       setProvider(null)
       setAccount('')
       setBalance('')
@@ -127,13 +127,16 @@ export default function Header() {
   }, [session, web3authSfa.state.privKey, web3authSfa.provider]);
   return (
     <Flex
-      bg="teal.500"
+      bg="teal.600"
       color="white"
       p="4"
       justifyContent="center"
       alignItems="center"
       width="100%"
+      position="fixed"
+      left="0"
     >
+      <Text fontSize="lg" fontWeight="bold">PromisePay</Text>
       <noscript>
         <style>{`.nojs-show { opacity: 1; top: 0; }`}</style>
       </noscript>
@@ -144,10 +147,7 @@ export default function Header() {
         >
           {!session && (
             <>
-              <span className={styles.notSignedInText}>
-                You are not signed in
-              </span>
-              <a
+              <Link
                 href={`/api/auth/signin`}
                 className={styles.buttonPrimary}
                 onClick={async (e) => {
@@ -158,23 +158,13 @@ export default function Header() {
                 }}
               >
                 Sign in
-              </a>
+              </Link>
             </>
           )}
           {session?.user && (
             <>
-              {session.user.image && (
-                <span
-                  style={{ backgroundImage: `url('${session.user.image}')` }}
-                  className={styles.avatar}
-                />
-              )}
-              <span className={styles.signedInText}>
-                <small>Signed in as</small>
-                <br />
-                <strong>{session.user.email ?? session.user.name}</strong>
-              </span>
-              <a
+
+              <Link
                 href={`/api/auth/signout`}
                 className={styles.button}
                 onClick={(e) => {
@@ -184,19 +174,15 @@ export default function Header() {
                 }}
               >
                 Sign out
-              </a>
+              </Link>
+
+              <Link href="/create" className={styles.button} >Create Promise</Link>
             </>
           )}
         </p>
       </div>
-      <nav>
-        <ul className={styles.navItems}>
-          <li className={styles.navItem}>
-            <Link href="/create" color='blue.400' _hover={{ color: 'blue.500' }}>Create Promise</Link>
-          </li>
-        </ul>
-      </nav>
-      <Text fontSize="lg" fontWeight="bold">App Name</Text>
+
+
     </Flex>
   )
 }

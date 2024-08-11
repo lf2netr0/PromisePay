@@ -4,7 +4,7 @@ import Layout from "../components/layout"
 import AccessDenied from "../components/access-denied"
 
 
-import { List, ListItem, ListIcon, Box, Text, Link } from '@chakra-ui/react';
+import { List, ListItem, ListIcon, Box, Text, Link, Button } from '@chakra-ui/react';
 import { MdCheckCircle } from "react-icons/md";
 
 
@@ -38,6 +38,7 @@ export default function ProtectedList() {
 
   useEffect(() => {
     const rpc = new RPC(provider);
+    setPromises([])
     rpc.contract.events.PromiseCreated({
       fromBlock: 13773164
     }).on('data', event => {
@@ -75,12 +76,18 @@ export default function ProtectedList() {
           {promises.map((promise) => (
             <ListItem key={promise.promiseId}>
               <ListIcon as={MdCheckCircle} color="green.500" />
-              Host: {promise.host} - ID: {promise.promiseId.toString()} - Address: {promise.promiseAddress}
-              <Link href={`/detail/${promise.promiseAddress}`} passhref={true}>
-                <Text as="a" ml={4} color="blue.500" textDecoration="underline">
+              <Box>
+                <Text>Host: {promise.host}</Text>
+                <Text>ID: {promise.promiseId.toString()}</Text>
+                <Text>Address: {promise.promiseAddress}</Text>
+              </Box>
+              <Button as="a" ml={4} color="blue.500" >
+                <Link href={`/detail/${promise.promiseAddress}`} passhref={true}>
+
                   View Details
-                </Text>
-              </Link>
+
+                </Link>
+              </Button>
             </ListItem>
           ))}
         </List>
