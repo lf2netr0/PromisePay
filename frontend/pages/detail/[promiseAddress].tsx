@@ -8,6 +8,9 @@ import { addressAtom, providerAtom } from '../../components/state';
 import { useEffect, useState } from 'react';
 import { IPromiseData } from '../../components/IPromise';
 import QRCode from 'react-qr-code';
+import Layout from '../../components/layout';
+import AccessDenied from '../../components/access-denied';
+import { useSession } from 'next-auth/react';
 
 
 export default function ServerSidePage() {
@@ -16,6 +19,7 @@ export default function ServerSidePage() {
     const [provider] = useAtom(providerAtom)
     const [promiseInfo, setPromiseInfo] = useState({} as IPromiseData);
     const [account] = useAtom(addressAtom)
+    const { data: session } = useSession()
     // Convert and format data
     const now = Math.floor(Date.now() / 1000);
     // States to track user interactions
@@ -90,7 +94,7 @@ export default function ServerSidePage() {
                     const receipt = await rpc.checkInPromise(promiseAddress, proof.user, proof.merkle_root, proof.nullifier_hash, proof.proof.replace('0x', '').match(/.{1,64}/g).map(a => '0x' + a))
                     toast({
                         title: "Deposit sent.",
-                        description: "Your promise has been successfully deposit! Tx: " + receipt.transactionHash,
+                        description: "Your promise has been successfully checkIn! Tx: " + receipt.transactionHash,
                         status: "success",
                         duration: 10000,
                         isClosable: true,
@@ -99,7 +103,7 @@ export default function ServerSidePage() {
             } catch (error) {
                 console.log(error.message)
                 toast({
-                    title: "Error deposit to promise.",
+                    title: "Error checkIn to promise.",
                     description: error.message,
                     status: "error",
                     duration: 10000,
@@ -117,7 +121,7 @@ export default function ServerSidePage() {
                 const receipt = await rpc.claimPromise(promiseAddress, proof.merkle_root, proof.nullifier_hash, proof.proof.replace('0x', '').match(/.{1,64}/g).map(a => '0x' + a))
                 toast({
                     title: "Deposit sent.",
-                    description: "Your promise has been successfully deposit! Tx: " + receipt.transactionHash,
+                    description: "Your promise has been successfully claim! Tx: " + receipt.transactionHash,
                     status: "success",
                     duration: 10000,
                     isClosable: true,
@@ -126,7 +130,7 @@ export default function ServerSidePage() {
         } catch (error) {
             console.log(error.message)
             toast({
-                title: "Error deposit to promise.",
+                title: "Error claim to promise.",
                 description: error.message,
                 status: "error",
                 duration: 10000,
@@ -148,11 +152,17 @@ export default function ServerSidePage() {
         // Such as redirecting the user to a new page
         console.log("/success");
     };
-
+    if (!session) {
+        return (
+          <Layout>
+            <AccessDenied />
+          </Layout>
+        )
+      }
     if (promiseInfo.host) {
         return (
 
-            <Box p={5} shadow="md" borderWidth="1px" borderRadius="lg">
+            <Box p= {5} mt={40} shadow="md" borderWidth="1px" borderRadius="lg">
                 <VStack align="start" spacing={4}>
                     <Text fontSize="2xl" fontWeight="bold">{promiseInfo.title}</Text>
                     <Text>Host: <Badge ml="1" colorScheme="purple">{promiseInfo.host}</Badge></Text>
@@ -224,7 +234,7 @@ export default function ServerSidePage() {
                             <Button colorScheme="green" onClick={handleCheckIn} isDisabled={userHasCheckedIn}>Check-In</Button>
                         </>
                     )}
-                    {userHasDeposited && (
+                    {userHasDeposited && userHasCheckedIn &&  (
                         <IDKitWidget
                             // 
                             app_id="app_staging_48e425187ceaa548d46adb5bdaa1c8b5" // must be an app set to on-chain in Developer Portal
